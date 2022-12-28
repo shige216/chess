@@ -1,14 +1,16 @@
-struct Coordinate(u8, u8);
+use std::collections::HashMap;
+
+struct Coordinate(char, u8);
 
 struct Cell {
   coordinate: Coordinate,
-  piece: Option<Box<Piece>>,
+  piece: Option<Piece>,
 }
 
 struct Piece {
   role: Role,
   is_dead: bool,
-  stand_at: Option<Cell>,
+  color: Color,
 }
 
 impl Piece {
@@ -21,6 +23,11 @@ impl Piece {
   }
 }
 
+enum Color {
+  White,
+  Black,
+}
+
 enum Role {
   Pawn,
   Knight,
@@ -31,81 +38,132 @@ enum Role {
 }
 
 struct Board {
-  status: Vec<Cell>,
+  status: HashMap<String, Cell>,
 }
 
 impl Board {
   fn init(&self) -> Board {
-
-    Board { status: vec![] }
+    let status = init();
+    Board { status }
   }
 }
 
-fn init() -> Vec<Cell> {
-  let a1 = Cell {
-    coordinate: Coordinate(0, 0),
-    piece: None,
-  };
-  let a2 = Cell {
-    coordinate: Coordinate(1, 0),
-    piece: None,
-  };
-  let a3 = Cell {
-    coordinate: Coordinate(2, 0),
-    piece: None,
-  };
-  let a4 = Cell {
-    coordinate: Coordinate(3, 0),
-    piece: None,
-  };
-  let a5 = Cell {
-    coordinate: Coordinate(4, 0),
-    piece: None,
-  };
-  let a6 = Cell {
-    coordinate: Coordinate(5, 0),
-    piece: None,
-  };
-  let a7 = Cell {
-    coordinate: Coordinate(6, 0),
-    piece: None,
-  };
-  let a8 = Cell {
-    coordinate: Coordinate(7, 0),
-    piece: None,
-  };
+fn init() -> HashMap<String, Cell> {
+  let mut map: HashMap<String, Cell> = HashMap::new();
+  let arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  for alpha in arr {
+    for num in 1..9 {
+      let key = format!("{}{}", alpha, num);
+      let mut val = Cell {
+        coordinate: Coordinate(alpha, num),
+        piece: None,
+      };
 
-  let b1 = Cell {
-    coordinate: Coordinate(0, 1),
-    piece: None,
-  };
-  let b2 = Cell {
-    coordinate: Coordinate(1, 1),
-    piece: None,
-  };
-  let b3 = Cell {
-    coordinate: Coordinate(2, 1),
-    piece: None,
-  };
-  let b4 = Cell {
-    coordinate: Coordinate(3, 1),
-    piece: None,
-  };
-  let b5 = Cell {
-    coordinate: Coordinate(4, 1),
-    piece: None,
-  };
-  let b6 = Cell {
-    coordinate: Coordinate(5, 1),
-    piece: None,
-  };
-  let b7 = Cell {
-    coordinate: Coordinate(6, 1),
-    piece: None,
-  };
-  let b8 = Cell {
-    coordinate: Coordinate(7, 1),
-    piece: None,
-  };
-  vec![]
+      if num == 2 {
+        val.piece = Some(Piece {
+          role: Role::Pawn,
+          is_dead: false,
+          color: Color::White,
+        });
+      } else if num == 7 {
+        val.piece = Some(Piece {
+          role: Role::Pawn,
+          is_dead: false,
+          color: Color::Black,
+        });
+      } else if num == 1 {
+        match alpha {
+            'a' => val.piece = Some(Piece {
+              role: Role::Rook,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'b' => val.piece = Some(Piece {
+              role: Role::Knight,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'c' => val.piece = Some(Piece {
+              role: Role::Bishop,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'd' => val.piece = Some(Piece {
+              role: Role::King,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'e' => val.piece = Some(Piece {
+              role: Role::Queen,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'f' => val.piece = Some(Piece {
+              role: Role::Bishop,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'g' => val.piece = Some(Piece {
+              role: Role::Knight,
+              is_dead: false,
+              color: Color::White,
+            }),
+            'h' => val.piece = Some(Piece {
+              role: Role::Rook,
+              is_dead: false,
+              color: Color::White,
+            }),
+            _ => (),
+        }
+      } else if num == 8 {
+        match alpha {
+            'a' => val.piece = Some(Piece {
+              role: Role::Rook,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'b' => val.piece = Some(Piece {
+              role: Role::Knight,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'c' => val.piece = Some(Piece {
+              role: Role::Bishop,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'd' => val.piece = Some(Piece {
+              role: Role::King,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'e' => val.piece = Some(Piece {
+              role: Role::Queen,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'f' => val.piece = Some(Piece {
+              role: Role::Bishop,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'g' => val.piece = Some(Piece {
+              role: Role::Knight,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            'h' => val.piece = Some(Piece {
+              role: Role::Rook,
+              is_dead: false,
+              color: Color::Black,
+            }),
+            _ => (),
+        }
+      }
+
+      map.entry(key).or_insert(val);
+    }
+  }
+
+  map
 }
