@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use super::cell::Cell;
 use super::coordinate::Coordinate;
-use super::piece::{Piece, Role, Color};
+use super::piece::{Color, Piece, Role};
+use std::collections::HashMap;
 
 pub struct Board {
     pub status: HashMap<String, Cell>,
@@ -16,7 +16,7 @@ impl Board {
     pub fn moveTo(&mut self, from: Coordinate, to: Coordinate) {
         let from_key = format!("{}{}", from.x(), from.y());
         let cell = self.status.get_mut(&from_key).expect("invalid key");
-        let piece = cell.piece.as_mut().expect("No piece there");
+        let piece = cell.piece.as_ref().expect("No piece there");
     }
 }
 
@@ -35,10 +35,10 @@ fn init() -> HashMap<String, Cell> {
 
                     spawn_pieces(&mut val, alpha, num);
                     map.entry(key).or_insert(val);
-                },
+                }
                 Err(e) => {
                     panic!("coordinates invalid.");
-                },
+                }
             }
         }
     }

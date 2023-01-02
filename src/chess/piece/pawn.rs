@@ -1,5 +1,5 @@
+use super::{add_move, Cell, Color, Coordinate};
 use std::collections::HashMap;
-use super::{Coordinate, Cell, Color, add_move};
 
 fn add_pawn_initial_move(status: &HashMap<String, Cell>, to: &mut Vec<Coordinate>, x: u8, y: u8) {
     let key = format!("{}{}", x, y);
@@ -12,7 +12,11 @@ fn add_pawn_initial_move(status: &HashMap<String, Cell>, to: &mut Vec<Coordinate
     }
 }
 
-pub fn pawn_move(from: Coordinate, status: &HashMap<String, Cell>, color: &Color) -> Vec<Coordinate> {
+pub fn pawn_move(
+    from: &Coordinate,
+    status: &HashMap<String, Cell>,
+    color: &Color,
+) -> Vec<Coordinate> {
     let x = from.x();
     let y = from.y();
 
@@ -27,7 +31,7 @@ pub fn pawn_move(from: Coordinate, status: &HashMap<String, Cell>, color: &Color
 
             add_move(status, &mut to, x + 1, y + 1, Color::Black);
             add_move(status, &mut to, x - 1, y + 1, Color::Black);
-        },
+        }
         Color::Black => {
             if y == 7 {
                 add_pawn_initial_move(status, &mut to, x, y - 1);
@@ -36,7 +40,7 @@ pub fn pawn_move(from: Coordinate, status: &HashMap<String, Cell>, color: &Color
 
             add_move(status, &mut to, x + 1, y - 1, Color::White);
             add_move(status, &mut to, x - 1, y - 1, Color::White);
-        },
+        }
     }
 
     to

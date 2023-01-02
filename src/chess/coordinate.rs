@@ -6,11 +6,11 @@ pub struct Coordinate {
 }
 
 impl Coordinate {
-    pub fn new(x: u8, y: u8) -> Result<Coordinate, Error>{
+    pub fn new(x: u8, y: u8) -> Result<Coordinate, Error> {
         if x < 1 || x > 8 || y < 1 || y > 8 {
             Err(Error::OutOfRange)
         } else {
-            Ok(Coordinate {x, y})
+            Ok(Coordinate { x, y })
         }
     }
 
