@@ -8,9 +8,19 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn init(&self) -> Board {
+    pub fn init() -> Board {
         let status = init();
         Board { status }
+    }
+
+    pub fn show(&self) {
+        for y in [8, 7, 6, 5, 4, 3, 2, 1] {
+            for x in 1..9 {
+                let key = format!("{}{}", x, y);
+                print_board(self, &key);
+            }
+            println!("");
+        }
     }
 
     pub fn moveTo(&mut self, from: Coordinate, to: Coordinate) {
@@ -20,25 +30,52 @@ impl Board {
     }
 }
 
+fn print_board(board: &Board, key: &str) {
+    let none = '□';
+    if let Some(c) = board.status.get(key) {
+        match &c.piece {
+            Some(p) => {
+                match &p.color {
+                    Color::Black => {
+                        match &p.role {
+                            Role::Bishop => print!("{}", '♝'),
+                            Role::Queen => print!("{}", '♛'),
+                            Role::King => print!("{}", '♚'),
+                            Role::Knight => print!("{}", '♞'),
+                            Role::Rook => print!("{}", '♜'),
+                            Role::Pawn => print!("{}", '♟'),
+                        }
+                    }
+                    Color::White => {
+                        match &p.role {
+                            Role::Bishop => print!("{}", '♗'),
+                            Role::Queen => print!("{}", '♕'),
+                            Role::King => print!("{}", '♔'),
+                            Role::Knight => print!("{}", '♘'),
+                            Role::Rook => print!("{}", '♖'),
+                            Role::Pawn => print!("{}", '♙'),
+                        }
+                    }
+                }
+            },
+            None => print!("{}", none),
+        }
+    }
+}
+
 fn init() -> HashMap<String, Cell> {
     let mut map: HashMap<String, Cell> = HashMap::new();
     for alpha in 1..9 {
         for num in 1..9 {
             let key = format!("{}{}", alpha, num);
-            let coordinate = Coordinate::new(alpha, num);
-            match coordinate {
-                Ok(c) => {
-                    let mut val = Cell {
-                        coordinate: c,
-                        piece: None,
-                    };
+            if let Ok(c) = Coordinate::new(alpha, num) {
+                let mut val = Cell {
+                    coordinate: c,
+                    piece: None,
+                };
 
-                    spawn_pieces(&mut val, alpha, num);
-                    map.entry(key).or_insert(val);
-                }
-                Err(e) => {
-                    panic!("coordinates invalid.");
-                }
+                spawn_pieces(&mut val, alpha, num);
+                map.entry(key).or_insert(val);
             }
         }
     }
@@ -180,4 +217,16 @@ fn spawn_pieces(val: &mut Cell, alpha: u8, num: u8) {
             _ => (),
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Board;
+
+    #[test]
+    fn init() {
+        let board = Board::init();
+        board.show();
+    }
+
 }
