@@ -1,3 +1,3 @@
 mod chess;
 
-pub use chess::board::Board as Board;
+pub use self::chess::board::Board;

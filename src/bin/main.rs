@@ -4,6 +4,7 @@ use std::io;
 
 use chess::Board;
 
+
 fn main() {
     println!("Welcome to CL Chess!");
     println!("You can type commands as they follow.");

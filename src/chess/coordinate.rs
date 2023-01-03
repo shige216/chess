@@ -1,5 +1,6 @@
 use super::error::Error;
 
+#[derive(Debug, PartialEq)]
 pub struct Coordinate {
     x: u8,
     y: u8,

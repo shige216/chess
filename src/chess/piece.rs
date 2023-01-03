@@ -14,11 +14,16 @@ use self::rook::rook_move;
 use super::{cell::Cell, coordinate::Coordinate};
 use std::collections::HashMap;
 
+#[derive(PartialEq)]
+#[derive(Clone, Copy)]
+#[derive(Debug)]
 pub enum Color {
     White,
     Black,
 }
 
+#[derive(Clone, Copy)]
+#[derive(Debug)]
 pub enum Role {
     Pawn,
     Knight,
@@ -28,6 +33,8 @@ pub enum Role {
     King,
 }
 
+#[derive(Clone, Copy)]
+#[derive(Debug)]
 pub struct Piece {
     pub role: Role,
     pub is_dead: bool,
