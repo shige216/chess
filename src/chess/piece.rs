@@ -57,21 +57,28 @@ impl Piece {
 fn add_move(status: &HashMap<String, Cell>, to: &mut HashSet<Coordinate>, x: u32, y: u32, color: Color) {
     let key = format!("{}{}", x, y);
     if let Some(c) = status.get(&key) {
-        if let Some(p) = &c.piece {
-            match color {
-                Color::Black => {
-                    if let Color::White = p.color {
-                        if let Ok(c) = Coordinate::new(x, y) {
-                            to.insert(c);
+        match c.piece {
+            Some(p) => {
+                match color {
+                    Color::Black => {
+                        if let Color::White = p.color {
+                            if let Ok(c) = Coordinate::new(x, y) {
+                                to.insert(c);
+                            }
+                        }
+                    }
+                    Color::White => {
+                        if let Color::Black = p.color {
+                            if let Ok(c) = Coordinate::new(x, y) {
+                                to.insert(c);
+                            }
                         }
                     }
                 }
-                Color::White => {
-                    if let Color::Black = p.color {
-                        if let Ok(c) = Coordinate::new(x, y) {
-                            to.insert(c);
-                        }
-                    }
+            }
+            None => {
+                if let Ok(c) = Coordinate::new(x, y) {
+                    to.insert(c);
                 }
             }
         }
