@@ -49,6 +49,7 @@ fn main() {
                                                                     for c in cs {
                                                                         print!("{}{}, ", c.x(), c.y());
                                                                     }
+                                                                    println!("");
                                                                 }
                                                                 Err(e) => {
                                                                     print_error(e);
