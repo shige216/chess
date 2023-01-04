@@ -2,17 +2,23 @@ use super::cell::Cell;
 use super::coordinate::Coordinate;
 use super::error::Error;
 use super::piece::{Color, Piece, Role};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 pub struct Board {
-    pub status: HashMap<String, Cell>,
+    status: HashMap<String, Cell>,
+    history: Vec<HashMap<String, Cell>>,
+    turn: Color,
 }
 
 impl Board {
     pub fn init() -> Board {
         let status = init();
-        Board { status }
+        Board {
+            status,
+            history: vec![],
+            turn: Color::White,
+        }
     }
 
     pub fn show(&self) {
@@ -27,7 +33,7 @@ impl Board {
         println!("  1 2 3 4 5 6 7 8 ");
     }
 
-    pub fn can_move(&self, from: Coordinate, color: Color) -> Result<Vec<Coordinate>, Error> {
+    pub fn can_move(&self, from: Coordinate) -> Result<HashSet<Coordinate>, Error> {
         let key = format!("{}{}", from.x(), from.y());
         let cell = self.status.get(&key);
         match cell {
@@ -35,7 +41,7 @@ impl Board {
                 let piece = c.piece.as_ref();
                 match piece {
                     Some(p) => {
-                        if p.color == color {
+                        if p.color == self.turn {
                             let options = p.can_move(&from, &self.status);
                             Ok(options)
                         } else {
@@ -51,7 +57,7 @@ impl Board {
 
     pub fn move_to(&mut self, from: Coordinate, to: Coordinate, color: Color) -> Result<(), Error> {
         let key = format!("{}{}", &from.x(), &from.y());
-        let options = self.can_move(from, color)?;
+        let options = self.can_move(from)?;
         if !options.contains(&to) {
             Err(Error::UnMovable)
         } else {
@@ -60,6 +66,11 @@ impl Board {
                 if let Some(p) = c.piece.take() {
                     if let Some(to_c) = self.status.get_mut(&to) {
                         to_c.piece = Some(p);
+                        self.history.push(self.status.clone());
+                        match color {
+                            Color::Black => self.turn = Color::White,
+                            Color::White => self.turn = Color::Black,
+                        }
                     }
                 }
             }
@@ -121,7 +132,7 @@ fn init() -> HashMap<String, Cell> {
     map
 }
 
-fn spawn_pieces(val: &mut Cell, alpha: u8, num: u8) {
+fn spawn_pieces(val: &mut Cell, alpha: u32, num: u32) {
     if num == 2 {
         val.piece = Some(Piece {
             role: Role::Pawn,
@@ -270,9 +281,9 @@ mod tests {
     #[test]
     fn can_move() {
         let board = Board::init();
-        let options = board.can_move(Coordinate::new(1, 2).unwrap(), crate::chess::piece::Color::White);
+        let options = board.can_move(Coordinate::new(1, 2).unwrap());
         println!("{:?}", options);
-        let options = board.can_move(Coordinate::new(1, 7).unwrap(), crate::chess::piece::Color::White);
+        let options = board.can_move(Coordinate::new(1, 7).unwrap());
         println!("{:?}", options);
     }
 
@@ -282,20 +293,6 @@ mod tests {
         board.show();
         println!("");
 
-        board.move_to(
-            Coordinate::new(1, 2).unwrap(),
-            Coordinate::new(1, 3).unwrap(),
-            crate::chess::piece::Color::White
-        );
-        board.show();
-        println!("");
 
-        board.move_to(
-            Coordinate::new(1, 3).unwrap(),
-            Coordinate::new(1, 4).unwrap(),
-            crate::chess::piece::Color::White
-        );
-        board.show();
-        println!("");
     }
 }

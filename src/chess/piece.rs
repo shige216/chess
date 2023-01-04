@@ -12,7 +12,7 @@ use self::pawn::pawn_move;
 use self::queen::queen_move;
 use self::rook::rook_move;
 use super::{cell::Cell, coordinate::Coordinate};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(PartialEq)]
 #[derive(Clone, Copy)]
@@ -42,7 +42,7 @@ pub struct Piece {
 }
 
 impl Piece {
-    pub fn can_move(&self, from: &Coordinate, status: &HashMap<String, Cell>) -> Vec<Coordinate> {
+    pub fn can_move(&self, from: &Coordinate, status: &HashMap<String, Cell>) -> HashSet<Coordinate> {
         match self.role {
             Role::Bishop => bishop_move(from, status, &self.color),
             Role::King => king_move(from, status, &self.color),
@@ -54,7 +54,7 @@ impl Piece {
     }
 }
 
-fn add_move(status: &HashMap<String, Cell>, to: &mut Vec<Coordinate>, x: u8, y: u8, color: Color) {
+fn add_move(status: &HashMap<String, Cell>, to: &mut HashSet<Coordinate>, x: u32, y: u32, color: Color) {
     let key = format!("{}{}", x, y);
     if let Some(c) = status.get(&key) {
         if let Some(p) = &c.piece {
@@ -62,14 +62,14 @@ fn add_move(status: &HashMap<String, Cell>, to: &mut Vec<Coordinate>, x: u8, y: 
                 Color::Black => {
                     if let Color::White = p.color {
                         if let Ok(c) = Coordinate::new(x, y) {
-                            to.push(c);
+                            to.insert(c);
                         }
                     }
                 }
                 Color::White => {
                     if let Color::Black = p.color {
                         if let Ok(c) = Coordinate::new(x, y) {
-                            to.push(c);
+                            to.insert(c);
                         }
                     }
                 }
@@ -80,9 +80,9 @@ fn add_move(status: &HashMap<String, Cell>, to: &mut Vec<Coordinate>, x: u8, y: 
 
 fn add_loop_move(
     status: &HashMap<String, Cell>,
-    to: &mut Vec<Coordinate>,
-    dx: u8,
-    dy: u8,
+    to: &mut HashSet<Coordinate>,
+    dx: u32,
+    dy: u32,
     color: &Color,
 ) -> bool {
     let key = format!("{}{}", dx, dy);
@@ -95,7 +95,7 @@ fn add_loop_move(
                     }
                     Color::Black => {
                         if let Ok(c) = Coordinate::new(dx, dy) {
-                            to.push(c);
+                            to.insert(c);
                             return false;
                         }
                     }
@@ -106,7 +106,7 @@ fn add_loop_move(
                     }
                     Color::White => {
                         if let Ok(c) = Coordinate::new(dx, dy) {
-                            to.push(c);
+                            to.insert(c);
                             return false;
                         }
                     }
@@ -114,7 +114,7 @@ fn add_loop_move(
             },
             None => {
                 if let Ok(c) = Coordinate::new(dx, dy) {
-                    to.push(c);
+                    to.insert(c);
                 }
             }
         }

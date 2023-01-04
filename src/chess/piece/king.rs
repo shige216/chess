@@ -1,14 +1,16 @@
+use std::collections::HashSet;
+
 use super::{add_move, Cell, Color, Coordinate, HashMap};
 
 pub fn king_move(
     from: &Coordinate,
     status: &HashMap<String, Cell>,
     color: &Color,
-) -> Vec<Coordinate> {
+) -> HashSet<Coordinate> {
     let x = from.x();
     let y = from.y();
 
-    let mut to = vec![];
+    let mut to = HashSet::new();
 
     match color {
         Color::White => {
